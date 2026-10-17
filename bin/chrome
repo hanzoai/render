@@ -1,0 +1,6 @@
+#!/bin/sh
+# The Chrome @hanzo/frames launches (FRAMES_BROWSER_PATH): the binary CHROME_PATH
+# names, with every request it makes leaving through the job's fence, and WebRTC
+# kept off UDP so it cannot go around it.
+[ -n "$RENDER_PROXY" ] || { echo "chrome: RENDER_PROXY is not set" >&2; exit 1; }
+exec "${CHROME_PATH:?}" --proxy-server="$RENDER_PROXY" --force-webrtc-ip-handling-policy=disable_non_proxied_udp "$@"

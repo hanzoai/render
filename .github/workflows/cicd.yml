@@ -1,0 +1,14 @@
+# Canonical caller; every knob lives in /hanzo.yml. github.com reads workflows
+# only from here, and the forge runs nothing for a hanzoai/* mirror, so this is
+# the copy that builds; .hanzo/workflows/cicd.yml is the same caller for the forge.
+name: CI/CD
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+jobs:
+  cicd:
+    uses: hanzoai/ci/.github/workflows/build.yml@v2
+    secrets: inherit

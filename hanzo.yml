@@ -1,0 +1,25 @@
+# Canonical CI/CD config for hanzoai/render, read by the hanzoai/ci reusable
+# workflow and platform.hanzo.ai. One image for both architectures: the
+# delegate lane (v2's default) builds each platform on a node of its own
+# architecture and joins them under one index.
+#
+# The gate runs the node:test suites on the runner against the Chrome the
+# runner image carries (Playwright's headless shell under /opt/playwright).
+# The runner has no ffmpeg and cannot install one (no sudo), so the video.edit
+# and render.composition suites report themselves skipped there and run
+# wherever ffmpeg is on PATH. TAP output is what the gate's tally reads.
+test:
+  - name: unit
+    run: |
+      set -euo pipefail
+      npm ci --ignore-scripts
+      CHROME_PATH="$(ls -d /opt/playwright/chromium_headless_shell-*/chrome-headless-shell-*/chrome-headless-shell | head -1)"
+      export CHROME_PATH
+      NODE_OPTIONS=--test-reporter=tap npm test
+
+images:
+  - name: render
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/render
+    platforms: [linux/amd64, linux/arm64]
