@@ -16,7 +16,10 @@ export type Op = (w: Record<string, any>, job: Job) => Promise<Product>
 // Where the measured output goes: the engine answers with a signed PUT once it
 // knows the size (the Library hands out an upload URL for a known object only).
 export type Target = { url: string; headers: Record<string, string> }
-export type Ask = (meta: { mime: string; bytes: number; sha256: string; name: string }) => Promise<unknown>
+// What the worker tells the engine about its one output before it uploads it: the
+// file's identity and what it measured in it, which the Library item carries.
+export type Meta = Result & { name: string }
+export type Ask = (meta: Meta) => Promise<unknown>
 
 export const OPS: Record<string, Op> = {
   'render.html': html,
@@ -108,7 +111,7 @@ export class Job {
     const r = await measure(out.file, out.mime, this.signal)
     if (r.bytes > this.bytes) throw new Fail(`output is ${r.bytes} bytes, over the ${this.bytes} byte limit`)
     const title = opt(this.with.title, 'title', 500).replace(/[\\/\x00-\x1f]+/g, ' ').trim().slice(0, 100)
-    const t = target(await ask({ mime: r.mime, bytes: r.bytes, sha256: r.sha256, name: `${title || 'render'}${extname(out.file)}` }))
+    const t = target(await ask({ ...r, name: `${title || 'render'}${extname(out.file)}` }))
     await upload(t.url, out.file, r.bytes, t.headers, this.signal)
     return r
   }

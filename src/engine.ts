@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { hostname } from 'node:os'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { Fail } from './check.ts'
+import type { Meta } from './job.ts'
 
 export type Config = {
   api: string        // HANZO_API
@@ -144,7 +145,7 @@ export class Engine {
   }
 
   // Where the measured output goes: a signed PUT and the headers to send.
-  async output(a: Activity, meta: { mime: string; bytes: number; sha256: string; name: string }): Promise<unknown> {
+  async output(a: Activity, meta: Meta): Promise<unknown> {
     const r = await retry(() => this.post(this.act(a, 'output'), meta))
     if (r.status < 200 || r.status > 299) {
       await r.body?.cancel()

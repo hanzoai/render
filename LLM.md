@@ -40,7 +40,7 @@ JSON body.
 | `{base}/namespaces` (boot, best effort) | `{"namespaceInfo":{"name":ns}}` | ignored |
 | `{base}/namespaces/{ns}/activities/claim` | `{"taskQueue","identity","leaseSeconds":120}` | `204` none, or `200` activity |
 | `…/activities/{wf}/{run}/heartbeat` | `{"details":{"progress","message"}}` | `404`/`409`: cancelled or not ours → abort, report nothing |
-| `…/activities/{wf}/{run}/output` | `{"mime","bytes","sha256","name"}` | `{"url":"<signed PUT>","headers":{…}}`; non-2xx fails the job |
+| `…/activities/{wf}/{run}/output` | `{"mime","bytes","sha256","name"}` plus what was measured (`width`,`height`,`seconds`,`pages`) | `{"url":"<signed PUT>","headers":{…}}`; non-2xx fails the job |
 | `…/activities/{wf}/{run}/complete` | `{"result":{…},"identity"}` | |
 | `…/activities/{wf}/{run}/fail` | `{"cause":"<one line>","identity"}` | |
 

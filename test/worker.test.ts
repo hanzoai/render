@@ -50,7 +50,9 @@ test('claim, heartbeat, output, upload, complete', async () => {
   const uploaded = f.uploads.get('wf-ok')!
   const done = JSON.parse(f.calls('complete')[0].body.toString())
   assert.equal(done.identity, 'test-worker')
-  assert.deepEqual(out, { mime: 'image/png', bytes: uploaded.length, sha256: done.result.sha256, name: 'Card.png' })
+  // The output request carries what the worker measured, since the Library never
+  // opens the file it is handed.
+  assert.deepEqual(out, { mime: 'image/png', bytes: uploaded.length, sha256: done.result.sha256, width: 200, height: 100, name: 'Card.png' })
   assert.equal(done.result.sha256, createHash('sha256').update(uploaded).digest('hex'))
   assert.deepEqual([done.result.width, done.result.height, done.result.bytes], [200, 100, uploaded.length])
   const put = f.hits.find((h) => h.method === 'PUT')!

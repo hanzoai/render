@@ -1,6 +1,6 @@
 {
   "name": "@hanzo/render",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Hanzo Studio's CPU render worker: HTML, documents, slides, compositions and video edits",
   "license": "MIT",
   "private": true,
